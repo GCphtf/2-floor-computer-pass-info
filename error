@@ -1,14 +1,47 @@
-# 1. Make sure venv module is available
-sudo apt install python3-full python3-venv
+---------------------------------------------------------------------------
+RuntimeError                              Traceback (most recent call last)
+Cell In[3], line 3
+      1 for pre_id, post_id in pairs:
+      2     print(f"\n=== {pre_id} -> {post_id} ===")
+----> 3     conn_df = fetch_synapse_connections(
+      4         source_criteria=pre_id,
+      5         target_criteria=post_id,
+      6         nt='max',
 
-# 2. Create a virtual environment (name it whatever you like, e.g. "neuprint-env")
-python3 -m venv ~/neuprint-env
+File ~/neuprint-env/lib/python3.12/site-packages/neuprint/client.py:281, in inject_client.<locals>.wrapper(client, *args, **kwargs)
+    279 if client is None:
+    280     client = default_client()
+--> 281 return f(*args, **kwargs, client=client)
 
-# 3. Activate it
-source ~/neuprint-env/bin/activate
+File ~/neuprint-env/lib/python3.12/site-packages/neuprint/queries/neuroncriteria.py:75, in neuroncriteria_args.<locals>.decorator.<locals>.wrapper(*args, **kwargs)
+     72 if 'client' in callargs:
+     73     callargs['client'] = client
+---> 75 return f(**callargs)
 
-# 4. Now install inside the venv — no more externally-managed error
-pip install neuprint-python jupyter pandas
+File ~/neuprint-env/lib/python3.12/site-packages/neuprint/queries/synapses.py:730, in fetch_synapse_connections(source_criteria, target_criteria, synapse_criteria, min_total_weight, batch_size, nt, client)
+    727     if len(batches) > 1:
+    728         src_crit.bodyId = batch_df['bodyId_pre'].unique()
+--> 730 batch_syn_df = _fetch_synapse_connections( src_crit,
+    731                                            tgt_crit,
+    732                                            synapse_criteria,
+    733                                            min_total_weight,
+    734                                            nt=nt,
+    735                                            client=client)
+    736 if len(batch_syn_df) > 0:
+    737     syn_dfs.append(batch_syn_df)
 
-# 5. Launch jupyter from inside the venv
-jupyter notebook
+File ~/neuprint-env/lib/python3.12/site-packages/neuprint/queries/synapses.py:783, in _fetch_synapse_connections(source_criteria, target_criteria, synapse_criteria, min_total_weight, nt, client)
+    781 synapse_nt_prop_names = client.fetch_synapse_nt_keys()
+    782 if nt and not synapse_nt_prop_names:
+--> 783     raise RuntimeError(
+    784         "Can't return synapse neurotransmitter properties: "
+    785         "No neurotransmitter properties found in the database."
+    786     )
+    788 # Fetch results
+    789 cypher = dedent(f"""\
+    790     {NeuronCriteria.combined_global_with((source_criteria, target_criteria), prefix=8)}
+    791     MATCH (n:{source_criteria.label})-[e:ConnectsTo]->(m:{target_criteria.label}),
+   (...)    816            apoc.map.removeKeys(ms, ['location', 'confidence', 'type']) as info_post
+    817 """)
+
+RuntimeError: Can't return synapse neurotransmitter properties: No neurotransmitter properties found in the database.
