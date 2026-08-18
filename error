@@ -1,21 +1,14 @@
-gy@gy-ThinkStation-P3-Ultra-SFF-G2:~$ pip install neuprint-python
-error: externally-managed-environment
+# 1. Make sure venv module is available
+sudo apt install python3-full python3-venv
 
-× This environment is externally managed
-╰─> To install Python packages system-wide, try apt install
-    python3-xyz, where xyz is the package you are trying to
-    install.
-    
-    If you wish to install a non-Debian-packaged Python package,
-    create a virtual environment using python3 -m venv path/to/venv.
-    Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
-    sure you have python3-full installed.
-    
-    If you wish to install a non-Debian packaged Python application,
-    it may be easiest to use pipx install xyz, which will manage a
-    virtual environment for you. Make sure you have pipx installed.
-    
-    See /usr/share/doc/python3.12/README.venv for more information.
+# 2. Create a virtual environment (name it whatever you like, e.g. "neuprint-env")
+python3 -m venv ~/neuprint-env
 
-note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
-hint: See PEP 668 for the detailed specification.
+# 3. Activate it
+source ~/neuprint-env/bin/activate
+
+# 4. Now install inside the venv — no more externally-managed error
+pip install neuprint-python jupyter pandas
+
+# 5. Launch jupyter from inside the venv
+jupyter notebook
