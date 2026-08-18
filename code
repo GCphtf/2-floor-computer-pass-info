@@ -9,7 +9,7 @@ print(1)
 
 
 from neuprint import NeuronCriteria as NC, fetch_neurons, fetch_roi_hierarchy, fetch_adjacencies, fetch_synapse_connections, SynapseCriteria as SC
-
+print(1)
 
 
 criteria_PFNd = NC(type='PFNd')
