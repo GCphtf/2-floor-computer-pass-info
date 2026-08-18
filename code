@@ -1,0 +1,24 @@
+from neuprint import Client, fetch_neurons, NeuronCriteria as NC
+from neuprint import fetch_synapse_connections
+
+c = Client('neuprint.janelia.org', dataset='hemibrain:v1.2.1', token='PASTE_YOUR_TOKEN_HERE')
+
+# Step 1: confirm these neurons are actually connected, and get synapse weight
+pairs = [
+    (846991524, 910447220),
+    (1225640135, 846991524),
+]
+
+for pre_id, post_id in pairs:
+    print(f"\n=== {pre_id} -> {post_id} ===")
+    conn_df = fetch_synapse_connections(
+        source_criteria=pre_id,
+        target_criteria=post_id,
+        client=c
+    )
+    print(f"Number of synapses: {len(conn_df)}")
+
+# Step 2: get the predicted neurotransmitter for each neuron (this is where NT lives)
+all_ids = [846991524, 910447220, 1225640135]
+neurons_df, roi_df = fetch_neurons(NC(bodyId=all_ids), client=c)
+print(neurons_df[['bodyId', 'type', 'predictedNt', 'predictedNtConfidence']])
